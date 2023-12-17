@@ -5,7 +5,7 @@ from itertools import combinations
 def read_text_file():
     content_list = []
 
-    read_text_file.filename = input("Enter filename to trees.txt ")
+    read_text_file.filename = input("Enter filename to trees.txt ") #the file has to be in the same directory as the source
 
     file = read_text_file.filename + ".txt"
 
@@ -48,8 +48,6 @@ def CreateAbbrevs():
 
             item_combinations = {c for c in item_combinations if c[0] == word_no_space[0]}
 
-            # Extend the unique_combinations_list with the item combinations
-            unique_combinations_list.extend(item_combinations)
 
             # Store the item name in the dictionary with its combinations as values
             combinations_dict[item] = item_combinations
@@ -61,7 +59,7 @@ def CalculateScore():
     combinations_dict = CreateAbbrevs()
     #read the values.txt file and store them in a dictionairy 
     values = {}
-    with open("values.txt", "r") as file:
+    with open("values.txt", "r") as file: #the file has to be in the same directory as the source
                 for line in file:
                     letter, value = line.strip().split()
                     values[letter] = int(value)
@@ -134,12 +132,14 @@ def FindAbv():
     abv_df = abv_df.drop_duplicates(subset="Abv", keep = False)
     #get mininimum value for each abbreviation
     min_value = abv_df.groupby('Tree_Name')['Score'].min()
-    #
+    # merge the two dataframes on Tree_Name to choose the abbreviations with lowest scores
     abv_df = abv_df.merge(min_value, on = "Tree_Name", suffixes = ('', '_min'))
     abv_df = abv_df[abv_df["Score"] == abv_df["Score_min"]].drop('Score_min', axis =1)
+    # Find if there are any missing names
     abv_df_diff = abv_df_copy[~abv_df_copy["Tree_Name"].isin(abv_df["Tree_Name"])]
     abv_df_final =  pd.concat([abv_df,abv_df_diff]).sort_index() #concat the missing names
-    abv_df_final.drop("Score", axis = 1, inplace=True)
+    abv_df_final.drop("Score", axis = 1, inplace=True) #drop the score column as it is not needed
+    #group names and concatonate those with multiple abbreviations
     abv_df_final['Abv'] = abv_df_final[["Tree_Name","Abv"]].groupby(["Tree_Name"])["Abv"].transform(lambda x: ' '.join(map(str, x)))
     abv_df_final = abv_df_final[['Tree_Name','Abv']].drop_duplicates()
 
