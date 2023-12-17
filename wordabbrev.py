@@ -61,8 +61,7 @@ def CalculateScore():
     combinations_dict = CreateAbbrevs()
     #read the values.txt file and store them in a dictionairy 
     values = {}
-    score_list = input("enter filename here")
-    with open(score_list, "r") as file:
+    with open("values.txt", "r") as file:
                 for line in file:
                     letter, value = line.strip().split()
                     values[letter] = int(value)
@@ -148,6 +147,6 @@ def FindAbv():
 # creating a main function to save the output as a txt file
 def main():
     final_df = FindAbv()
-    output_name = "glica_trees_abbrevs.txt"
+    output_name = "glica_"+read_text_file.filename+"_abbrevs.txt"
     final_df.to_csv(output_name, sep='\n', encoding="utf-8", index=False, header=False)
 main()
